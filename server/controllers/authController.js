@@ -109,7 +109,7 @@ export const logout = async (req, res) => {
 // Send verification otp to the user's email
 export const sendVerifyOtp = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = req.userId;
 
     const user = await userModel.findById(userId);
 
@@ -143,9 +143,10 @@ export const sendVerifyOtp = async (req, res) => {
   }
 };
 
-// To get the OTP and verify the user's account
+// To get the OTP and verify the user's account using OTP
 export const verifyEmail = async (req, res) => {
-  const { userId, otp } = req.body;
+  const userId = req.userId;
+  const { otp } = req.body;
 
   if (!userId || !otp) {
     return res.json({ success: false, message: "Missing Details" });
@@ -175,6 +176,16 @@ export const verifyEmail = async (req, res) => {
     // Save to database
     await user.save();
     return res.json({ success: false, message: "Email verified successfully" });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+// Check if user is already logged in or not
+// Check if user is authenticated
+export const isAuthenticated = async (req, res) => {
+  try {
+    return res.json({ success: true });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
